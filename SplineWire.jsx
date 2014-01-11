@@ -19,6 +19,7 @@ objectShape = 0;
 wireThickness = -1;
 myMasks = -1;
 numOfMasks = -1;
+var masksContainer = new Array();
 //======================================================
 //==================== UI CALL BACKS ===================
 //======================================================
@@ -44,22 +45,36 @@ function onCreate()
 compFrameRate = activeComp.frameRate;
 activeComp = app.project.activeItem; 
 
-
 myMasks = activeComp.layer(1).Masks;
 numOfMasks = myMasks.numProperties;
-for(i = 1; i <= numOfMasks; i++){
+
+
+getAllMasks();
+alert("hiho");
+alert(masksContainer[1].maskPath.value.vertices.length);
+alert("haha");
+
+/*for(i = 1; i <= numOfMasks; i++){
 	mask = activeComp.layer(1).mask(i);
+	
 	maskPath = mask.maskPath.value;
 	pathCount = maskPath.vertices.length;
 	numOfKeys = mask.maskPath.numKeys;
 	addWireRemovalEffect(i);
 	setEffectValues();
 
-}
-
+}*/
 
 //addWireRemovalEffect();
 //setEffectValues();
+}
+
+function getAllMasks(){
+	for(i = 1; i <= numOfMasks; i++){
+		tempMask = activeComp.layer(1).mask(i);
+		masksContainer.push(tempMask);
+
+	}
 }
 
 function addWireRemovalEffect(maskNum){
