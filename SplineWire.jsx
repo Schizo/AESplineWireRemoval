@@ -1,3 +1,9 @@
+//This script creates a chain of "CC Simple Wire Removal" Effects along a Created MaskPath
+//You can define the Thickness for a Spline
+//Everytime you change the position of your spline, you have to recreate the effect
+
+
+
 {
 function SplineWire(thisObj)
 {
@@ -8,14 +14,8 @@ var EffectName = "CC Simple Wire Removal";
 activeComp =0;
 mask = 0;
 maskPath = 0;
-pathCount = 0;
 numOfKeys = -1;
-firstFrame = -1;
-lastFrame = -1;
-firstFrameTime = -1;
-lastFrameTime = -1;
 compFrameRate = -1;
-objectShape = 0;
 wireThickness = -1;
 myMasks = -1;
 numOfMasks = -1;
@@ -39,6 +39,9 @@ function onReplaceStringChanged()
 	myReplaceString = this.text;
 }
 
+//======================================================
+//================ MAIN ENTRY FUNCTION =================
+//======================================================
 function onCreate()
 {
 
@@ -50,48 +53,31 @@ numOfMasks = myMasks.numProperties;
 
 
 getAllMasks();
-alert("hiho");
-alert(masksContainer[1].maskPath.value.vertices.length);
-alert("haha");
 
-/*for(i = 1; i <= numOfMasks; i++){
-	mask = activeComp.layer(1).mask(i);
-	
-	maskPath = mask.maskPath.value;
-	pathCount = maskPath.vertices.length;
-	numOfKeys = mask.maskPath.numKeys;
-	addWireRemovalEffect(i);
-	setEffectValues();
 
-}*/
+addWireRemovalEffect();
+setEffectValues();
 
-//addWireRemovalEffect();
-//setEffectValues();
 }
 
 function getAllMasks(){
 	for(i = 1; i <= numOfMasks; i++){
 		tempMask = activeComp.layer(1).mask(i);
 		masksContainer.push(tempMask);
-
 	}
 }
 
-function addWireRemovalEffect(maskNum){
-
+function addWireRemovalEffect(){
 removeAllWireEffects();
 
+for(k = 0; k <= numOfMasks-1; k++){
+	for (j = 0 ; j <  masksContainer[k].maskPath.value.vertices.length-1; j++){
+		var wireEffect =  activeComp.layer(1).property("Effects").addProperty("CC Simple Wire Removal");
 
-for (j = 0 ; j <  maskPath.vertices.length-1; j++){
-	//var myEffect = activeComp.layer(1).property("Effects").property("CC Simple Wire Removal").property("Point A").setValue(myFillColor);
-	var wireEffect =  activeComp.layer(1).property("Effects").addProperty("CC Simple Wire Removal");
-	wireEffect.name = "m" + maskNum +" CC Simple Wire Removal " + j;
-
+		var maskGroupID = "m" + k;
+		wireEffect.name =  maskGroupID + " CC Simple Wire Removal " + j;
+	}
 }
-//Rename the first Element to iterate easier in later steps
-//myEffects = activeComp.layer(1).Effects;
-//myEffects.property("CC Simple Wire Removal").name = "m" + maskNum +"CC Simple Wire Removal 1";
-
 //Create a Slider for the thickness
 //var slider  = activeComp.layer(1).property("Effects").addProperty("Slider Control");
 //slider.property(1).setValue(12);
@@ -111,42 +97,6 @@ myEffects = activeComp.layer(1).Effects;
 
 }
 
-
-function setEffectValues(){
-
-myEffects = activeComp.layer(1).Effects;
-
-
-for(k = 1; k <= numOfMasks; k++){
-//Iterate through the Frame Keys
-	for(j = 1; j <= numOfKeys; j++){
-		actualKeyTime = mask.maskPath.keyTime(j);
-		pathKeyValue = getValueAtTime(actualKeyTime);
-
-		//Iterate through the Available Vertices
-		for(i = 0; i < pathCount-1; i++){
-			propname = "m" + k + " CC Simple Wire Removal " + i;
-			//alert(propname);
-			
-				//alert(propname);
-				var pointA = [pathKeyValue.vertices[i][0], pathKeyValue.vertices[i][1]];
-				var pointB = [pathKeyValue.vertices[i+1][0], pathKeyValue.vertices[i+1][1]];
-				activeComp.layer(1).property("Effects").property(propname).property("Point A").addKey(actualKeyTime);
-				activeComp.layer(1).property("Effects").property(propname).property("Point A").setValueAtTime(actualKeyTime, pointA);
-				activeComp.layer(1).property("Effects").property(propname).property("Point B").addKey(actualKeyTime);
-				activeComp.layer(1).property("Effects").property(propname).property("Point B").setValueAtTime(actualKeyTime, pointB);
-				activeComp.layer(1).property("Effects").property(propname).property("Thickness").setValue(10);
-			
-		}
-	}
-}
-}
-
-
-function getValueAtTime(timeOfKey){
-	return mask.maskPath.valueAtTime(timeOfKey, true);
-}
-
 function removeAllWireEffects(){
  try{
       myEffects = activeComp.layer(1).Effects;
@@ -163,6 +113,54 @@ function removeAllWireEffects(){
 
 }
 
+
+function setEffectValues(){
+
+myEffects = activeComp.layer(1).Effects;
+
+
+for(k = 0; k <= numOfMasks-1; k++){
+
+	alert("num of masks: " + numOfMasks);
+//Iterate through the Frame Keys
+	for(j = 1; j <= masksContainer[k].maskPath.numKeys; j++){
+
+		actualKeyTime = masksContainer[k].maskPath.keyTime(j);
+
+		var pathKeyValue = getValueAtTime(actualKeyTime, k);
+		
+		iterator = masksContainer[k].maskPath.value.vertices.length-1;
+		
+		alert("iterator : " + iterator);
+		for(i = 0; i < iterator; i++){
+			propname = "m" + (k) + " CC Simple Wire Removal " + i;
+			
+			
+				
+				var pointA = [pathKeyValue.vertices[i][0], pathKeyValue.vertices[i][1]];
+				var pointB = [pathKeyValue.vertices[i+1][0], pathKeyValue.vertices[i+1][1]];
+				
+				activeComp.layer(1).property("Effects").property(propname).property("Point A").addKey(actualKeyTime);
+				activeComp.layer(1).property("Effects").property(propname).property("Point A").setValueAtTime(actualKeyTime, pointA);
+				activeComp.layer(1).property("Effects").property(propname).property("Point B").addKey(actualKeyTime);
+				activeComp.layer(1).property("Effects").property(propname).property("Point B").setValueAtTime(actualKeyTime, pointB);
+				activeComp.layer(1).property("Effects").property(propname).property("Thickness").setValue(10);
+			
+			
+		}
+	}
+}
+}
+
+
+function getValueAtTime(timeOfKey, k){
+	return  masksContainer[k].maskPath.valueAtTime(timeOfKey, true);
+}
+
+
+//================================================================
+//========================= GUI CREATION =========================
+//================================================================
 	if (parseFloat(app.version) < 8)
 		{
 			alert("This script requires After Effects CS3 or later.", scriptName);
@@ -227,9 +225,7 @@ function removeAllWireEffects(){
 				my_palette.grp.findRow.mask3.onChange    = function(){ onUpdateThickness(3, this.text)};
 				my_palette.grp.findRow.mask4.onChange    = function(){ onUpdateThickness(4, this.text)};
 				my_palette.grp.findRow.mask5.onChange    = function(){ onUpdateThickness(5, this.text)};
-				//alert(my_palette.grp.findRow.mask1);
-				//alert(my_palette.grp.findRow.fontString.value);
-				//my_palette.grp.cmds.replaceButton.onClick = onReplaceAll;
+					//my_palette.grp.cmds.replaceButton.onClick = onReplaceAll;
 				//my_palette.grp.cmds.helpButton.onClick    = onShowHelp;
 				
 				my_palette.onResizing = my_palette.onResize = function () {this.layout.resize();}
