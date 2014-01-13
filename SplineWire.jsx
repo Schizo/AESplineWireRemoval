@@ -120,8 +120,6 @@ myEffects = activeComp.layer(1).Effects;
 
 
 for(k = 0; k <= numOfMasks-1; k++){
-
-	alert("num of masks: " + numOfMasks);
 //Iterate through the Frame Keys
 	for(j = 1; j <= masksContainer[k].maskPath.numKeys; j++){
 
@@ -130,12 +128,8 @@ for(k = 0; k <= numOfMasks-1; k++){
 		var pathKeyValue = getValueAtTime(actualKeyTime, k);
 		
 		iterator = masksContainer[k].maskPath.value.vertices.length-1;
-		
-		alert("iterator : " + iterator);
 		for(i = 0; i < iterator; i++){
 			propname = "m" + (k) + " CC Simple Wire Removal " + i;
-			
-			
 				
 				var pointA = [pathKeyValue.vertices[i][0], pathKeyValue.vertices[i][1]];
 				var pointB = [pathKeyValue.vertices[i+1][0], pathKeyValue.vertices[i+1][1]];
@@ -178,14 +172,16 @@ function getValueAtTime(timeOfKey, k){
 					findRow: Group { \
 						alignment:['fill','top'], \
 						selectTxtButton: Button { text:'Video Layer', alignment:['fill','left'] }, \
-						findEditText: EditText { text:'', characters:20, alignment:['fill','center'] }, \
 						fontString: StaticText { text:'Thickness:', alignment:['right','left'] }, \
 						mask1: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
 						mask2: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
 						mask3: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
 						mask4: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
-						mask5: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
 					}, \
+					m1: Group { \
+						alignment:['fill','top'],\
+						mask5: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
+					},\
 					replaceRow: Group { \
 						alignment:['fill','top'], \
 						replaceEditText: EditText { text:'', characters:4, alignment:['fill','center'] }, \
@@ -203,29 +199,31 @@ function getValueAtTime(timeOfKey, k){
 				// Workaround to ensure the editext text color is black, even at darker UI brightness levels
 				var winGfx = my_palette.graphics;
 				var darkColorBrush = winGfx.newPen(winGfx.BrushType.SOLID_COLOR, [0,0,0], 1);
-				my_palette.grp.findRow.findEditText.graphics.foregroundColor = darkColorBrush;
+				//my_palette.grp.findRow.findEditText.graphics.foregroundColor = darkColorBrush;
 				my_palette.grp.replaceRow.replaceEditText.graphics.foregroundColor = darkColorBrush;
 				
-			//my_palette.grp.findRow.findStr.preferredSize.width = my_palette.grp.replaceRow.replaceStr.preferredSize.width;
+				//my_palette.grp.findRow.findStr.preferredSize.width = my_palette.grp.replaceRow.replaceStr.preferredSize.width;
 				
-				my_palette.grp.findRow.findEditText.onChange = my_palette.grp.findRow.findEditText.onChanging = onFindStringChanged;
-				my_palette.grp.findRow.mask1.onChange = my_palette.grp.findRow.mask1.onChanging = onFontStringChanged;
-				my_palette.grp.findRow.mask2.onChange = my_palette.grp.findRow.mask1.onChanging = onFontStringChanged;
-				my_palette.grp.findRow.mask3.onChange = my_palette.grp.findRow.mask1.onChanging = onFontStringChanged;
-				my_palette.grp.findRow.mask4.onChange = my_palette.grp.findRow.mask1.onChanging = onFontStringChanged;
-				my_palette.grp.findRow.mask5.onChange = my_palette.grp.findRow.mask1.onChanging = onFontStringChanged;
+				//my_palette.grp.findRow.findEditText.onChange = my_palette.grp.findRow.findEditText.onChanging = onFindStringChanged;
+				//my_palette.grp.findRow.mask1.onChange = my_palette.grp.findRow.mask1.onChanging = onFontStringChanged;
+				//my_palette.grp.findRow.mask2.onChange = my_palette.grp.findRow.mask2.onChanging = onFontStringChanged;
+				//my_palette.grp.findRow.mask3.onChange = my_palette.grp.findRow.mask3.onChanging = onFontStringChanged;
+				//my_palette.grp.findRow.mask4.onChange = my_palette.grp.findRow.mask4.onChanging = onFontStringChanged;
+				my_palette.grp.m1.mask5.onChange = my_palette.grp.m1.mask5.onChanging = onFontStringChanged;
 				my_palette.grp.replaceRow.replaceEditText.onChange = my_palette.grp.replaceRow.replaceEditText.onChanging = onReplaceStringChanged;
 				
 				//my_palette.grp.findRow.selectTxtButton.onClick =onSelectFont;
 				my_palette.grp.cmds.createButton.onClick    = onCreate;
 				//wireThickness = my_palette.grp.cmds.fontString.value;
 				//alert(wireThickness);
-				my_palette.grp.findRow.mask1.onChange    = function(){ onUpdateThickness(1, this.text)};
-				my_palette.grp.findRow.mask2.onChange    = function(){ onUpdateThickness(2, this.text)};
-				my_palette.grp.findRow.mask3.onChange    = function(){ onUpdateThickness(3, this.text)};
-				my_palette.grp.findRow.mask4.onChange    = function(){ onUpdateThickness(4, this.text)};
-				my_palette.grp.findRow.mask5.onChange    = function(){ onUpdateThickness(5, this.text)};
-					//my_palette.grp.cmds.replaceButton.onClick = onReplaceAll;
+				//my_palette.grp.findRow.mask1.onChange    = function(){ onUpdateThickness(1, this.text)};
+				//my_palette.grp.findRow.mask2.onChange    = function(){ onUpdateThickness(2, this.text)};
+				//my_palette.grp.findRow.mask3.onChange    = function(){ onUpdateThickness(3, this.text)};
+				//my_palette.grp.findRow.mask4.onChange    = function(){ onUpdateThickness(4, this.text)};
+				my_palette.grp.m1.mask5.onChange    = function(){ onUpdateThickness(5, this.text)};
+				//alert(my_palette.grp.findRow.mask1);
+				//alert(my_palette.grp.findRow.fontString.value);
+				//my_palette.grp.cmds.replaceButton.onClick = onReplaceAll;
 				//my_palette.grp.cmds.helpButton.onClick    = onShowHelp;
 				
 				my_palette.onResizing = my_palette.onResize = function () {this.layout.resize();}
