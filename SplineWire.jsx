@@ -9,7 +9,7 @@ function SplineWire(thisObj)
 {
 //Globals
 //todo better inits
-var scriptName = "Stringstream";
+var scriptName = "Chained Wire Removal Tool";
 var EffectName = "CC Simple Wire Removal";
 activeComp =0;
 mask = 0;
@@ -86,12 +86,21 @@ for(k = 0; k <= numOfMasks-1; k++){
 }
 
 function onUpdateThickness(id, thickness){
+if(!isValid(masksContainer[id].maskPath.value))
+	return;
 myEffects = activeComp.layer(1).Effects;
- compareString = "m" + id + " " + EffectName;
- for (j = myEffects.numProperties; j > 0; j--){
-	if(myEffects.property(j).name.substring(0, 25).localeCompare(compareString) == 0){
+//var compareString = "m" + id + " " + EffectName;
+ //for (j = myEffects.numProperties; j > 0; j--){
+ 
+ for (j = 0; j < masksContainer[id].maskPath.value.vertices.length-1; j++){
+ 	compareString = "m" + id + " " + EffectName + " " + j;
+ 	alert("compstring");
+ 	activeComp.layer(1).property("Effects").property(compareString).property("Thickness").setValue(thickness);
+ 	alert(compareString);
+ 	//alert(compareString);
+	/*if(myEffects.property(j).name.substring(0, 25).localeCompare(compareString) == 0){
         myEffects.property(j).property("Thickness").setValue(thickness);
-    }
+    }*/
       }
 
 
@@ -172,19 +181,38 @@ function getValueAtTime(timeOfKey, k){
 					findRow: Group { \
 						alignment:['fill','top'], \
 						selectTxtButton: Button { text:'Video Layer', alignment:['fill','left'] }, \
-						fontString: StaticText { text:'Thickness:', alignment:['right','left'] }, \
-						mask1: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
-						mask2: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
-						mask3: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
-						mask4: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
+					}, \
+					title: Group{ \
+						alignment: ['left', 'top'],\
+						fontString: StaticText { text:'Thickness of Wire:', alignment:['left','center'] }, \
 					}, \
 					m1: Group { \
 						alignment:['fill','top'],\
-						mask5: EditText { text:'2', characters:3, alignment:['fill','center'] }, \
+						fontString: StaticText { text:'1 :', alignment:['left','left'] }, \
+						mask1: EditText { text:'2', characters:3, alignment:['right','center'] }, \
+					},\
+					m2: Group { \
+						alignment:['fill','top'],\
+						fontString: StaticText { text:'2 :', alignment:['left','left'] }, \
+						mask2: EditText { text:'2', characters:3, alignment:['right','center'] }, \
+					},\
+					m3: Group { \
+						alignment:['fill','top'],\
+						fontString: StaticText { text:'3 :', alignment:['left','left'] }, \
+						mask3: EditText { text:'2', characters:3, alignment:['right','center'] }, \
+					},\
+					m4: Group { \
+						alignment:['fill','top'],\
+						fontString: StaticText { text:'4 :', alignment:['left','left'] }, \
+						mask4: EditText { text:'2', characters:3, alignment:['right','center'] }, \
+					},\
+					m5: Group { \
+						alignment:['fill','top'],\
+						fontString: StaticText { text:'5 :', alignment:['left','left'] }, \
+						mask5: EditText { text:'2', characters:3, alignment:['right','center'] }, \
 					},\
 					replaceRow: Group { \
 						alignment:['fill','top'], \
-						replaceEditText: EditText { text:'', characters:4, alignment:['fill','center'] }, \
 					}, \
 					cmds: Group { \
 						alignment:['fill','top'], \
@@ -200,8 +228,7 @@ function getValueAtTime(timeOfKey, k){
 				var winGfx = my_palette.graphics;
 				var darkColorBrush = winGfx.newPen(winGfx.BrushType.SOLID_COLOR, [0,0,0], 1);
 				//my_palette.grp.findRow.findEditText.graphics.foregroundColor = darkColorBrush;
-				my_palette.grp.replaceRow.replaceEditText.graphics.foregroundColor = darkColorBrush;
-				
+				//my_palette.grp.replaceRow.replaceEditText.graphics.foregroundColor = darkColorBrush;
 				//my_palette.grp.findRow.findStr.preferredSize.width = my_palette.grp.replaceRow.replaceStr.preferredSize.width;
 				
 				//my_palette.grp.findRow.findEditText.onChange = my_palette.grp.findRow.findEditText.onChanging = onFindStringChanged;
@@ -209,18 +236,22 @@ function getValueAtTime(timeOfKey, k){
 				//my_palette.grp.findRow.mask2.onChange = my_palette.grp.findRow.mask2.onChanging = onFontStringChanged;
 				//my_palette.grp.findRow.mask3.onChange = my_palette.grp.findRow.mask3.onChanging = onFontStringChanged;
 				//my_palette.grp.findRow.mask4.onChange = my_palette.grp.findRow.mask4.onChanging = onFontStringChanged;
-				my_palette.grp.m1.mask5.onChange = my_palette.grp.m1.mask5.onChanging = onFontStringChanged;
-				my_palette.grp.replaceRow.replaceEditText.onChange = my_palette.grp.replaceRow.replaceEditText.onChanging = onReplaceStringChanged;
+				//my_palette.grp.m1.mask5.onChange = my_palette.grp.m1.mask5.onChanging = onFontStringChanged;
+				//my_palette.grp.replaceRow.replaceEditText.onChange = my_palette.grp.replaceRow.replaceEditText.onChanging = onReplaceStringChanged;
 				
 				//my_palette.grp.findRow.selectTxtButton.onClick =onSelectFont;
 				my_palette.grp.cmds.createButton.onClick    = onCreate;
 				//wireThickness = my_palette.grp.cmds.fontString.value;
 				//alert(wireThickness);
-				//my_palette.grp.findRow.mask1.onChange    = function(){ onUpdateThickness(1, this.text)};
+				my_palette.grp.m1.mask1.onChange    = function(){ onUpdateThickness(0, this.text)};
+				my_palette.grp.m2.mask2.onChange    = function(){ onUpdateThickness(1, this.text)};
+				my_palette.grp.m3.mask3.onChange    = function(){ onUpdateThickness(2, this.text)};
+				my_palette.grp.m4.mask4.onChange    = function(){ onUpdateThickness(3, this.text)};
+				my_palette.grp.m5.mask5.onChange    = function(){ onUpdateThickness(4, this.text)};
 				//my_palette.grp.findRow.mask2.onChange    = function(){ onUpdateThickness(2, this.text)};
 				//my_palette.grp.findRow.mask3.onChange    = function(){ onUpdateThickness(3, this.text)};
 				//my_palette.grp.findRow.mask4.onChange    = function(){ onUpdateThickness(4, this.text)};
-				my_palette.grp.m1.mask5.onChange    = function(){ onUpdateThickness(5, this.text)};
+			//	my_palette.grp.m1.mask5.onChange    = function(){ onUpdateThickness(5, this.text)};
 				//alert(my_palette.grp.findRow.mask1);
 				//alert(my_palette.grp.findRow.fontString.value);
 				//my_palette.grp.cmds.replaceButton.onClick = onReplaceAll;
