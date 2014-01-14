@@ -89,18 +89,10 @@ function onUpdateThickness(id, thickness){
 if(!isValid(masksContainer[id].maskPath.value))
 	return;
 myEffects = activeComp.layer(1).Effects;
-//var compareString = "m" + id + " " + EffectName;
- //for (j = myEffects.numProperties; j > 0; j--){
- 
+
  for (j = 0; j < masksContainer[id].maskPath.value.vertices.length-1; j++){
  	compareString = "m" + id + " " + EffectName + " " + j;
- 	alert("compstring");
- 	activeComp.layer(1).property("Effects").property(compareString).property("Thickness").setValue(thickness);
- 	alert(compareString);
- 	//alert(compareString);
-	/*if(myEffects.property(j).name.substring(0, 25).localeCompare(compareString) == 0){
-        myEffects.property(j).property("Thickness").setValue(thickness);
-    }*/
+ 		activeComp.layer(1).property("Effects").property(compareString).property("Thickness").setValue(thickness);
       }
 
 
